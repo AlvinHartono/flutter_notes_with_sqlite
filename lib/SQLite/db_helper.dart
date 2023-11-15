@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:projext/models/note.dart';
 import 'package:projext/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -11,8 +11,11 @@ class DatabaseHelper {
   String userTable =
       "CREATE TABLE users (userId INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, password TEXT);";
 
-  //Database initialization
+  //notes table
+  String noteTable =
+      "CREATE TABLE notes (id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT, content TEXT, createdAt TEXT);";
 
+  //Database initialization
   Future<Database> initDB() async {
     final databasePath = await getDatabasesPath();
     final path = join(databasePath, databaseName);
@@ -49,5 +52,18 @@ class DatabaseHelper {
   Future<int> signup(User user) async {
     final Database db = await initDB();
     return db.insert('users', user.toMap());
+  }
+
+  //Creating notes
+  Future<int> createNote(Note note) async {
+    final Database db = await initDB();
+
+    return db.insert('notes', note.toMap());
+  }
+
+  Future<List<Note>> getNotes() async {
+    final Database db = await initDB();
+    List<Map<String, Object?>> result = await db.query('notes');
+    return result.map((e) => Note.fromMap(e)).toList();
   }
 }
