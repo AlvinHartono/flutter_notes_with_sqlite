@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       );
 
-      Navigator.of(context).push(MaterialPageRoute(
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
         builder: (context) => const Notes(),
       ));
     } else {
@@ -126,7 +126,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          login();
+                          // login();
+                          Navigator.of(context)
+                              .pushReplacement(MaterialPageRoute(
+                            builder: (context) => const Notes(),
+                          ));
                         }
                       },
                       child: const Text("Login"),

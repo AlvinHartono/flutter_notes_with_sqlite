@@ -5,7 +5,7 @@ class Note {
   final String createdAt;
 
   Note({
-    required this.id,
+    this.id,
     required this.title,
     required this.content,
     required this.createdAt,

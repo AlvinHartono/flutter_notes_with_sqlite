@@ -25,6 +25,7 @@ class DatabaseHelper {
       version: 1,
       onCreate: (db, version) async {
         await db.execute(userTable);
+        await db.execute(noteTable);
       },
     );
   }
@@ -42,16 +43,19 @@ class DatabaseHelper {
       );
       return result.isNotEmpty;
     } catch (e) {
-      print('an error occured during login: $e');
-      //snackbar to show the error to the user
+      return false;
     }
-    return false;
   }
 
   //Creating users with Sign Up
   Future<int> signup(User user) async {
-    final Database db = await initDB();
-    return db.insert('users', user.toMap());
+    try {
+      final Database db = await initDB();
+      var result = db.insert('users', user.toMap());
+      return result;
+    } catch (e) {
+      return 0;
+    }
   }
 
   //Creating notes
@@ -65,5 +69,17 @@ class DatabaseHelper {
     final Database db = await initDB();
     List<Map<String, Object?>> result = await db.query('notes');
     return result.map((e) => Note.fromMap(e)).toList();
+  }
+
+  Future<int> deleteNote(int id) async {
+    final Database db = await initDB();
+
+    return db.delete('notes', where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> updateNote(title, content, id) async {
+    final Database db = await initDB();
+    return db.rawUpdate('UPDATE notes SET title = ?, content = ?, WHERE = ?',
+        [title, content, id]);
   }
 }
