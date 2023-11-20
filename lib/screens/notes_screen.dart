@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:projext/SQLite/db_helper.dart';
 import 'package:projext/models/note.dart';
 import 'package:projext/screens/create_notes.dart';
+import 'package:projext/screens/login.dart';
 
 class Notes extends StatefulWidget {
   const Notes({super.key});
@@ -58,6 +59,45 @@ class _NotesState extends State<Notes> {
             end: Alignment.bottomRight,
           )),
         ),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                child: const Text("Sign Out"),
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Sign Out'),
+                        content:
+                            const Text("Are you sure you want to sign out?"),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            child: const Text("No"),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop;
+                              Navigator.of(context)
+                                  .pushReplacement(MaterialPageRoute(
+                                builder: (context) => const LoginScreen(),
+                              ));
+                            },
+                            child: const Text("Yes"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+              ),
+            ],
+          )
+        ],
         title: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8),
           margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -81,57 +121,55 @@ class _NotesState extends State<Notes> {
           ),
         ),
       ),
-      body: Expanded(
-        child: FutureBuilder<List<Note>>(
-          future: notes,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            } else if (snapshot.hasData && snapshot.data!.isEmpty) {
-              return const Center(
-                child: Text('no data'),
-              );
-            } else if (snapshot.hasError) {
-              return Text(snapshot.error.toString());
-            } else {
-              final items = snapshot.data ?? <Note>[];
-              return ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(items[index].title),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        db
-                            .deleteNote(items[index].id!)
-                            .whenComplete(() => _refresh());
-                      },
-                    ),
-                    onTap: () {
-                      setState(() {
-                        // title.text = items[index].noteTitle;
-                        // content.text = items[index].noteContent;
-                      });
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            actions: [
-                              Row(
-                                children: [],
-                              )
-                            ],
-                          );
-                        },
-                      );
+      body: FutureBuilder<List<Note>>(
+        future: notes,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasData && snapshot.data!.isEmpty) {
+            return const Center(
+              child: Text('no data'),
+            );
+          } else if (snapshot.hasError) {
+            return Text(snapshot.error.toString());
+          } else {
+            final items = snapshot.data ?? <Note>[];
+            return ListView.builder(
+              itemCount: items.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(items[index].title),
+                  trailing: IconButton(
+                    icon: const Icon(Icons.delete),
+                    onPressed: () {
+                      db
+                          .deleteNote(items[index].id!)
+                          .whenComplete(() => _refresh());
                     },
-                  );
-                },
-              );
-            }
-          },
-        ),
+                  ),
+                  onTap: () {
+                    setState(() {
+                      // title.text = items[index].noteTitle;
+                      // content.text = items[index].noteContent;
+                    });
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          actions: [
+                            Row(
+                              children: [],
+                            )
+                          ],
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            );
+          }
+        },
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => Navigator.of(context).push(
