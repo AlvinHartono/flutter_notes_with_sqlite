@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:projext/SQLite/db_helper.dart';
 import 'package:projext/models/note.dart';
+import 'package:projext/screens/notes_screen.dart';
 
 class CreateNote extends StatefulWidget {
   const CreateNote({super.key});
@@ -31,7 +32,10 @@ class _CreateNoteState extends State<CreateNote> {
                         content: content.text,
                         createdAt: DateTime.now().toIso8601String()))
                     .whenComplete(
-                      () => Navigator.of(context).pop(),
+                      () => Navigator.of(context)
+                          .pushReplacement(MaterialPageRoute(
+                        builder: (context) => const Notes(),
+                      )),
                     );
               }
             },

@@ -149,17 +149,20 @@ class _NotesState extends State<Notes> {
                   ),
                   onTap: () {
                     setState(() {
-                      // title.text = items[index].noteTitle;
-                      // content.text = items[index].noteContent;
+                      title.text = items[index].title;
+                      content.text = items[index].content;
                     });
                     showDialog(
                       context: context,
                       builder: (context) {
                         return AlertDialog(
+                          title: Text(items[index].title),
+                          content: Text(items[index].content),
                           actions: [
-                            Row(
-                              children: [],
-                            )
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text("close"),
+                            ),
                           ],
                         );
                       },
